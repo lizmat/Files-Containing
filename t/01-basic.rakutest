@@ -1,0 +1,6 @@
+use Test;
+use Files::Containing;
+
+pass "replace me";
+
+done-testing;

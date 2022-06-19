@@ -1,0 +1,31 @@
+{
+  "auth": "zef:lizmat",
+  "authors": [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends": [
+  ],
+  "depends": [
+    "hyperize:ver<0.0.2>:auth<zef:lizmat>",
+    "paths:ver<10.0.3>:auth<zef:lizmat>",
+    "Lines::Containing:ver<0.0.2>:auth<zef:lizmat>"
+  ],
+  "description": "Search for strings in files",
+  "license": "Artistic-2.0",
+  "name": "Files::Containing",
+  "perl": "6.d",
+  "provides": {
+    "Files::Containing": "lib/Files/Containing.rakumod"
+  },
+  "resources": [
+  ],
+  "source-url": "https://github.com/lizmat/Files-Containing.git",
+  "tags": [
+    "FILES",
+    "SEARCH",
+    "TEXT"
+  ],
+  "test-depends": [
+  ],
+  "version": "0.0.1"
+}
