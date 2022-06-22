@@ -38,7 +38,7 @@ The `files-containing` subroutine returns either a list of filenames (when the `
 
 #### needle
 
-The first positional argument is the needle to search for. This can either be a `Str`, a `Regex` or a `Callable`.
+The first positional argument is the needle to search for. This can either be a `Str`, a `Regex` or a `Callable`. If given a `Callable`, this implies the `:files-only` named argument to be set.
 
 #### files or directory
 
@@ -74,7 +74,7 @@ The `:file` named argument to be passed to the [paths](https://raku.land/zef:liz
 
 #### :files-only
 
-The `:files-only` named argument to be passed determines whether only filename should be returned, rather than a list of pairs, in which the key is the filename, and the value is a list of filenumber / line pairs.
+The `:files-only` named argument determines whether only the filename should be returned, rather than a list of pairs, in which the key is the filename, and the value is a list of filenumber / line pairs.
 
 #### :include-dot-files
 
@@ -86,7 +86,7 @@ Ignored if a `:file` named argument was specified. Defaults to `False`, indicati
 
 The `:i` (or `:ignorecase`) named argument indicates whether searches should be done without regard to case. Ignored if the needle is **not** a `Str`.
 
-#### :i or :ignoremark
+#### :m or :ignoremark
 
 The `:m` (or `:ignoremark`) named argument indicates whether searches should be done by only looking at the base characters, without regard to any additional accents. Ignored if the needle is **not** a `Str`.
 

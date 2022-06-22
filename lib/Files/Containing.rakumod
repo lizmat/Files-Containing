@@ -45,25 +45,26 @@ my multi sub files-containing(
         :$degree,
 ) {
 
-    @files.&hyperize($batch, $degree).map: $files-only
-      ?? is-simple-Callable($needle)
+    @files.&hyperize($batch, $degree).map: is-simple-Callable($needle)
+      ?? -> IO() $io {
+             my $slurped := try $io.slurp(:enc<utf8-c8>);
+             $io if $slurped.defined && $needle($slurped)
+         }
+      !! $files-only
         ?? -> IO() $io {
-               $io if try $needle($io.slurp)
+               my $slurped := try $io.slurp(:enc<utf8-c8>);
+               $io if $slurped && $slurped.contains($needle, :$i, :$m)
            }
         !! -> IO() $io {
-               $io
-                 if try $io.slurp.contains($needle, :$i, :$m)
+               my $slurped := try $io.slurp(:enc<utf8-c8>);
+               if $slurped && $slurped.contains($needle, :$i, :$m) {
+                   with try lines-containing(
+                     $slurped, $needle, :$i, :$m, :p, :offset($offset // 0)
+                   ) -> @pairs {
+                       $io => @pairs.Slip if @pairs.elems;
+                   }
+               }
            }
-      !! -> IO() $io {
-                my $slurped := try $io.slurp;
-                if $slurped.contains($needle, :$i, :$m) {
-                    with try lines-containing(
-                      $slurped, $needle, :$i, :$m, :p, :offset($offset // 0)
-                    ) -> @pairs {
-                        $io => @pairs.Slip if @pairs.elems;
-                    }
-                }
-            }
 }
 
 =begin pod
@@ -110,7 +111,8 @@ needle was found.
 =head4 needle
 
 The first positional argument is the  needle to search for.  This can either
-be a C<Str>, a C<Regex> or a C<Callable>.
+be a C<Str>, a C<Regex> or a C<Callable>.  If given a C<Callable>, this
+implies the C<:files-only> named argument to be set.
 
 =head4 files or directory
 
@@ -161,9 +163,9 @@ of files was specified as the second positional argument.
 
 =head4 :files-only
 
-The C<:files-only> named argument to be passed determines whether only
-filename should be returned, rather than a list of pairs, in which the
-key is the filename, and the value is a list of filenumber / line pairs.
+The C<:files-only> named argument determines whether only the filename
+should be returned, rather than a list of pairs, in which the key is the
+filename, and the value is a list of filenumber / line pairs.
 
 =head4 :include-dot-files
 
@@ -179,7 +181,7 @@ The C<:i> (or C<:ignorecase>) named argument indicates whether searches
 should be done without regard to case.  Ignored if the needle is B<not>
 a C<Str>.
 
-=head4 :i or :ignoremark
+=head4 :m or :ignoremark
 
 The C<:m> (or C<:ignoremark>) named argument indicates whether searches
 should be done by only looking at the base characters, without regard to

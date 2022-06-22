@@ -2,6 +2,13 @@ Revision history for Files-Containing
 
 {{$NEXT}}
 
+0.0.3  2022-06-22T21:52:37+02:00
+    - Fix warning on files that couldn't be slurped as text
+    - Make sure the "utf8-c8" encoding is used to be more resilient
+      against improperly encoded files
+    - Specifying a Callable as a needle, implies ":files-only"
+    - Various pod tweaks
+
 0.0.2  2022-06-22T21:18:29+02:00
     - First slurp a file to see if the string is in there, and only if it
       is, then actually look for the lines
