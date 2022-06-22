@@ -37,8 +37,8 @@ my multi sub files-containing(
 my multi sub files-containing(
   Any:D  $needle,
          @files,
-        :i($ignorecase),
-        :m($ignoremark),
+        :ignorecase(:$i),
+        :ignoremark(:$m),
         :$offset,
         :$files-only,
         :$batch,
@@ -47,14 +47,21 @@ my multi sub files-containing(
 
     @files.&hyperize($batch, $degree).map: $files-only
       ?? is-simple-Callable($needle)
-        ?? -> IO() $io { $io if $needle($io.slurp) }
-        !! -> IO() $io { $io if try $io.slurp.contains($needle) }
+        ?? -> IO() $io {
+               $io if try $needle($io.slurp)
+           }
+        !! -> IO() $io {
+               $io
+                 if try $io.slurp.contains($needle, :$i, :$m)
+           }
       !! -> IO() $io {
-                with try lines-containing(
-                  $io, $needle, :$ignorecase, :$ignoremark,
-                  :p, :offset($offset // 0)
-                ) -> @pairs {
-                    $io => @pairs.Slip if @pairs.elems;
+                my $slurped := try $io.slurp;
+                if $slurped.contains($needle, :$i, :$m) {
+                    with try lines-containing(
+                      $slurped, $needle, :$i, :$m, :p, :offset($offset // 0)
+                    ) -> @pairs {
+                        $io => @pairs.Slip if @pairs.elems;
+                    }
                 }
             }
 }

@@ -2,5 +2,9 @@ Revision history for Files-Containing
 
 {{$NEXT}}
 
+0.0.2  2022-06-22T21:18:29+02:00
+    - First slurp a file to see if the string is in there, and only if it
+      is, then actually look for the lines
+
 0.0.1  2022-06-21T13:25:38+02:00
     - Initial version
