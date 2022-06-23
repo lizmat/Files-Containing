@@ -90,6 +90,10 @@ The `:i` (or `:ignorecase`) named argument indicates whether searches should be 
 
 The `:m` (or `:ignoremark`) named argument indicates whether searches should be done by only looking at the base characters, without regard to any additional accents. Ignored if the needle is **not** a `Str`.
 
+#### :max-count
+
+The `:max-count` named argument indicates the maximum number of lines that should be reported per file. Defaults to `Any`, indicating that all possible lines will be produced. Ignored if `:files-only` is specified with a true value.
+
 #### :offset
 
 The `:offset` named argument indicates the value of the first line number in a file. It defaults to **0**. Ignored if the `:files-only` named argument has been specified with a true value.

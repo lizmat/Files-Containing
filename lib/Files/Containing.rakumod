@@ -1,6 +1,6 @@
 use hyperize:ver<0.0.2>:auth<zef:lizmat>;
 use paths:ver<10.0.4>:auth<zef:lizmat>;
-use Lines::Containing:ver<0.0.3>:auth<zef:lizmat>;
+use Lines::Containing:ver<0.0.4>:auth<zef:lizmat>;
 
 my sub is-simple-Callable($needle) {
     Callable.ACCEPTS($needle) && !Regex.ACCEPTS($needle)
@@ -43,6 +43,7 @@ my multi sub files-containing(
         :$files-only,
         :$batch,
         :$degree,
+        :$max-count,
 ) {
 
     @files.&hyperize($batch, $degree).map: is-simple-Callable($needle)
@@ -59,7 +60,8 @@ my multi sub files-containing(
                my $slurped := try $io.slurp(:enc<utf8-c8>);
                if $slurped && $slurped.contains($needle, :$i, :$m) {
                    with try lines-containing(
-                     $slurped, $needle, :$i, :$m, :p, :offset($offset // 0)
+                     $slurped, $needle, :$i, :$m, :p, :$max-count,
+                     :offset($offset // 0)
                    ) -> @pairs {
                        $io => @pairs.Slip if @pairs.elems;
                    }
@@ -186,6 +188,13 @@ a C<Str>.
 The C<:m> (or C<:ignoremark>) named argument indicates whether searches
 should be done by only looking at the base characters, without regard to
 any additional accents.  Ignored if the needle is B<not> a C<Str>.
+
+=head4 :max-count
+
+The C<:max-count> named argument indicates the maximum number of lines
+that should be reported per file.  Defaults to C<Any>, indicating that
+all possible lines will be produced.  Ignored if C<:files-only> is specified
+with a true value.
 
 =head4 :offset
 
