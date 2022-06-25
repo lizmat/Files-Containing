@@ -2,6 +2,10 @@ Revision history for Files-Containing
 
 {{$NEXT}}
 
+0.0.5  2022-06-25T13:53:32+02:00
+    - Add support for ":invert-match" named argument
+    - Bump dependency on Lines::Containing to get :invert-match support
+
 0.0.4  2022-06-23T12:09:45+02:00
     - Add support for ":max-count" named argument
     - Bump dependency on Lines::Containing to get :max-count support

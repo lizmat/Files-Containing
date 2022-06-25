@@ -76,15 +76,19 @@ The `:file` named argument to be passed to the [paths](https://raku.land/zef:liz
 
 The `:files-only` named argument determines whether only the filename should be returned, rather than a list of pairs, in which the key is the filename, and the value is a list of filenumber / line pairs.
 
+#### :i or :ignorecase
+
+The `:i` (or `:ignorecase`) named argument indicates whether searches should be done without regard to case. Ignored if the needle is **not** a `Str`.
+
 #### :include-dot-files
 
 The `:include-dot-files` named argument is a boolean indicating whether filenames that start with a period should be included.
 
 Ignored if a `:file` named argument was specified. Defaults to `False`, indicating to **not** include filenames that start with a period.
 
-#### :i or :ignorecase
+#### :invert-match
 
-The `:i` (or `:ignorecase`) named argument indicates whether searches should be done without regard to case. Ignored if the needle is **not** a `Str`.
+The `:invert-match` named argument is a boolean indicating whether to produce files / lines that did **NOT** match (if a true value is specified). Default is `False`, so that only matching files / lines will be produced.
 
 #### :m or :ignoremark
 

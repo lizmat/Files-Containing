@@ -1,6 +1,6 @@
 use hyperize:ver<0.0.2>:auth<zef:lizmat>;
 use paths:ver<10.0.4>:auth<zef:lizmat>;
-use Lines::Containing:ver<0.0.4>:auth<zef:lizmat>;
+use Lines::Containing:ver<0.0.5>:auth<zef:lizmat>;
 
 my sub is-simple-Callable($needle) {
     Callable.ACCEPTS($needle) && !Regex.ACCEPTS($needle)
@@ -39,11 +39,12 @@ my multi sub files-containing(
          @files,
         :ignorecase(:$i),
         :ignoremark(:$m),
-        :$offset,
+        :$offset = 0,
         :$files-only,
         :$batch,
         :$degree,
         :$max-count,
+        :$invert-match,
 ) {
 
     @files.&hyperize($batch, $degree).map: is-simple-Callable($needle)
@@ -61,7 +62,7 @@ my multi sub files-containing(
                if $slurped && $slurped.contains($needle, :$i, :$m) {
                    with try lines-containing(
                      $slurped, $needle, :$i, :$m, :p, :$max-count,
-                     :offset($offset // 0)
+                     :$offset, :$invert-match,
                    ) -> @pairs {
                        $io => @pairs.Slip if @pairs.elems;
                    }
@@ -169,6 +170,12 @@ The C<:files-only> named argument determines whether only the filename
 should be returned, rather than a list of pairs, in which the key is the
 filename, and the value is a list of filenumber / line pairs.
 
+=head4 :i or :ignorecase
+
+The C<:i> (or C<:ignorecase>) named argument indicates whether searches
+should be done without regard to case.  Ignored if the needle is B<not>
+a C<Str>.
+
 =head4 :include-dot-files
 
 The C<:include-dot-files> named argument is a boolean indicating whether
@@ -177,11 +184,11 @@ filenames that start with a period should be included.
 Ignored if a C<:file> named argument was specified.  Defaults to C<False>,
 indicating to B<not> include filenames that start with a period.
 
-=head4 :i or :ignorecase
+=head4 :invert-match
 
-The C<:i> (or C<:ignorecase>) named argument indicates whether searches
-should be done without regard to case.  Ignored if the needle is B<not>
-a C<Str>.
+The C<:invert-match> named argument is a boolean indicating whether to
+produce files / lines that did B<NOT> match (if a true value is specified).
+Default is C<False>, so that only matching files / lines will be produced.
 
 =head4 :m or :ignoremark
 
