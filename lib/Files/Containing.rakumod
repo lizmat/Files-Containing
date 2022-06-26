@@ -1,6 +1,6 @@
 use hyperize:ver<0.0.2>:auth<zef:lizmat>;
 use paths:ver<10.0.5>:auth<zef:lizmat>;
-use Lines::Containing:ver<0.0.5>:auth<zef:lizmat>;
+use Lines::Containing:ver<0.0.6>:auth<zef:lizmat>;
 
 my sub is-simple-Callable($needle) {
     Callable.ACCEPTS($needle) && !Regex.ACCEPTS($needle)
@@ -48,15 +48,24 @@ my multi sub files-containing(
 ) {
 
     @files.&hyperize($batch, @files == 1 ?? 1 !! $degree)
-      .map: is-simple-Callable($needle)
-        ?? -> IO() $io {
-               my $slurped := try $io.slurp(:enc<utf8-c8>);
-               $io if $slurped.defined && $needle($slurped)
-           }
-        !! $files-only
+      .map: $files-only
+        ?? is-simple-Callable($needle)
           ?? -> IO() $io {
                  my $slurped := try $io.slurp(:enc<utf8-c8>);
+                 $io if $slurped.defined && $needle($slurped)
+             }
+          !! -> IO() $io {
+                 my $slurped := try $io.slurp(:enc<utf8-c8>);
                  $io if $slurped && $slurped.contains($needle, :$i, :$m)
+             }
+        !! is-simple-Callable($needle)
+          ?? -> IO() $io {
+                 with try lines-containing(
+                   $io, $needle, :$i, :$m, :p, :$max-count,
+                   :$offset, :$invert-match,
+                 ) -> @pairs {
+                     $io => @pairs.Slip if @pairs.elems;
+                 }
              }
           !! -> IO() $io {
                  my $slurped := try $io.slurp(:enc<utf8-c8>);
@@ -114,9 +123,10 @@ needle was found.
 
 =head4 needle
 
-The first positional argument is the  needle to search for.  This can either
-be a C<Str>, a C<Regex> or a C<Callable>.  If given a C<Callable>, this
-implies the C<:files-only> named argument to be set.
+The first positional argument is the needle to search for.  This can either
+be a C<Str>, a C<Regex> or a C<Callable>.  See the documentation of the
+L<Lines::Containing|https://raku.land/zef:lizmat/Lines::Containing> module
+for the exact semantics of each possible needle.
 
 =head4 files or directory
 

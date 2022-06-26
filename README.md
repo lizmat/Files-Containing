@@ -38,7 +38,7 @@ The `files-containing` subroutine returns either a list of filenames (when the `
 
 #### needle
 
-The first positional argument is the needle to search for. This can either be a `Str`, a `Regex` or a `Callable`. If given a `Callable`, this implies the `:files-only` named argument to be set.
+The first positional argument is the needle to search for. This can either be a `Str`, a `Regex` or a `Callable`. See the documentation of the [Lines::Containing](https://raku.land/zef:lizmat/Lines::Containing) module for the exact semantics of each possible needle.
 
 #### files or directory
 
