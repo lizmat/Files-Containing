@@ -2,6 +2,9 @@ Revision history for Files-Containing
 
 {{$NEXT}}
 
+0.0.6  2022-06-26T14:32:40+02:00
+    - Up dependency of "paths" to get single file support
+
 0.0.5  2022-06-25T13:53:32+02:00
     - Add support for ":invert-match" named argument
     - Bump dependency on Lines::Containing to get :invert-match support

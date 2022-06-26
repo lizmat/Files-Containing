@@ -44,7 +44,7 @@ The first positional argument is the needle to search for. This can either be a 
 
 The second positional argument is optional. If not specified, or specified with an undefined value, then it will assume to search from the current directory.
 
-It can be specified with a list of files to be searched. Or it can be a scalar value indicating the directory that should be searched for recursively.
+It can be specified with a list of files to be searched. Or it can be a scalar value indicating the directory that should be searched for recursively. If it is a scalar value and it is an existing file, then only that file will be searched.
 
 ### Named Arguments
 

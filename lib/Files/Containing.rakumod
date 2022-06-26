@@ -1,5 +1,5 @@
 use hyperize:ver<0.0.2>:auth<zef:lizmat>;
-use paths:ver<10.0.4>:auth<zef:lizmat>;
+use paths:ver<10.0.5>:auth<zef:lizmat>;
 use Lines::Containing:ver<0.0.5>:auth<zef:lizmat>;
 
 my sub is-simple-Callable($needle) {
@@ -47,27 +47,28 @@ my multi sub files-containing(
         :$invert-match,
 ) {
 
-    @files.&hyperize($batch, $degree).map: is-simple-Callable($needle)
-      ?? -> IO() $io {
-             my $slurped := try $io.slurp(:enc<utf8-c8>);
-             $io if $slurped.defined && $needle($slurped)
-         }
-      !! $files-only
+    @files.&hyperize($batch, @files == 1 ?? 1 !! $degree)
+      .map: is-simple-Callable($needle)
         ?? -> IO() $io {
                my $slurped := try $io.slurp(:enc<utf8-c8>);
-               $io if $slurped && $slurped.contains($needle, :$i, :$m)
+               $io if $slurped.defined && $needle($slurped)
            }
-        !! -> IO() $io {
-               my $slurped := try $io.slurp(:enc<utf8-c8>);
-               if $slurped && $slurped.contains($needle, :$i, :$m) {
-                   with try lines-containing(
-                     $slurped, $needle, :$i, :$m, :p, :$max-count,
-                     :$offset, :$invert-match,
-                   ) -> @pairs {
-                       $io => @pairs.Slip if @pairs.elems;
-                   }
-               }
-           }
+        !! $files-only
+          ?? -> IO() $io {
+                 my $slurped := try $io.slurp(:enc<utf8-c8>);
+                 $io if $slurped && $slurped.contains($needle, :$i, :$m)
+             }
+          !! -> IO() $io {
+                 my $slurped := try $io.slurp(:enc<utf8-c8>);
+                 if $slurped && $slurped.contains($needle, :$i, :$m) {
+                     with try lines-containing(
+                       $slurped, $needle, :$i, :$m, :p, :$max-count,
+                       :$offset, :$invert-match,
+                     ) -> @pairs {
+                         $io => @pairs.Slip if @pairs.elems;
+                     }
+                 }
+             }
 }
 
 =begin pod
@@ -125,6 +126,8 @@ directory.
 
 It can be specified with a list of files to be searched.  Or it can be a
 scalar value indicating the directory that should be searched for recursively.
+If it is a scalar value and it is an existing file, then only that file will
+be searched.
 
 =head3 Named Arguments
 
