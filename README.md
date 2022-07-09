@@ -102,6 +102,16 @@ The `:max-count` named argument indicates the maximum number of lines that shoul
 
 The `:offset` named argument indicates the value of the first line number in a file. It defaults to **0**. Ignored if the `:files-only` named argument has been specified with a true value.
 
+paths
+-----
+
+The `paths` subroutine, as provided by the version of [paths](https://raku.land/zef:lizmat/paths) that is used.
+
+lines-containing
+----------------
+
+The `lines-containing` subroutine, as provided by the version of [lines-containing](https://raku.land/zef:lizmat/Lines::Containing) that is used.
+
 AUTHOR
 ======
 

@@ -1,6 +1,9 @@
 use Test;
 use Files::Containing;
 
-pass "replace me";
+plan 3;
 
-done-testing;
+ok ::('&' ~ $_) ~~ Callable, "is $_ exported?"
+  for <paths lines-containing files-containing>;
+
+# vim: expandtab shiftwidth=4

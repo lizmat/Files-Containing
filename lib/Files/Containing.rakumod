@@ -6,7 +6,7 @@ my sub is-simple-Callable($needle) {
     Callable.ACCEPTS($needle) && !Regex.ACCEPTS($needle)
 }
 
-my proto sub files-containing(|) is export {*}
+my proto sub files-containing(|) {*}
 my multi sub files-containing(
   Any:D   $needle,
   Str:D   $root?,
@@ -78,6 +78,13 @@ my multi sub files-containing(
                      }
                  }
              }
+}
+
+my sub EXPORT() {
+    BEGIN Map.new:
+      '&paths'            => &paths,
+      '&lines-containing' => &lines-containing,
+      '&files-containing' => &files-containing,
 }
 
 =begin pod
@@ -221,6 +228,17 @@ with a true value.
 The C<:offset> named argument indicates the value of the first line number
 in a file.  It defaults to B<0>.  Ignored if the C<:files-only> named argument
 has been specified with a true value.
+
+=head2 paths
+
+The C<paths> subroutine, as provided by the version of
+L<paths|https://raku.land/zef:lizmat/paths> that is used.
+
+=head2 lines-containing
+
+The C<lines-containing> subroutine, as provided by the version of
+L<lines-containing|https://raku.land/zef:lizmat/Lines::Containing> that
+is used.
 
 =head1 AUTHOR
 
