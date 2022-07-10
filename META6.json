@@ -7,7 +7,7 @@
   ],
   "depends": [
     "hyperize:ver<0.0.2>:auth<zef:lizmat>",
-    "paths:ver<10.0.5>:auth<zef:lizmat>",
+    "paths:ver<10.0.6>:auth<zef:lizmat>",
     "Lines::Containing:ver<0.0.6>:auth<zef:lizmat>"
   ],
   "description": "Search for strings in files",
@@ -27,5 +27,5 @@
   ],
   "test-depends": [
   ],
-  "version": "0.0.8"
+  "version": "0.0.9"
 }

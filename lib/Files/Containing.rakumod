@@ -1,5 +1,5 @@
 use hyperize:ver<0.0.2>:auth<zef:lizmat>;
-use paths:ver<10.0.5>:auth<zef:lizmat>;
+use paths:ver<10.0.6>:auth<zef:lizmat>;
 use Lines::Containing:ver<0.0.6>:auth<zef:lizmat>;
 
 my sub is-simple-Callable($needle) {
@@ -14,6 +14,7 @@ my multi sub files-containing(
          :$include-dot-files,
          :$file is copy,
          :$dir,
+         :$follow-symlinks,
          *%_
 ) {
     without $file {
@@ -32,7 +33,11 @@ my multi sub files-containing(
               !! { .ends-with(any(@exts)) && !.starts-with(".") }
             !! !*.starts-with(".")
     }
-    files-containing($needle, paths($root, :$file, :$dir), |%_)
+    files-containing(
+      $needle,
+      paths($root, :$file, :$dir, :$follow-symlinks),
+      |%_
+    )
 }
 my multi sub files-containing(
   Any:D  $needle,
@@ -189,6 +194,12 @@ of files was specified as the second positional argument.
 The C<:files-only> named argument determines whether only the filename
 should be returned, rather than a list of pairs, in which the key is the
 filename, and the value is a list of filenumber / line pairs.
+
+=head4 :follow-symlinks
+
+The C<:follow-symlinks> named argument to be passed to the
+L<paths|https://raku.land/zef:lizmat/paths> subroutine.  Ignored if a list
+of files was specified as the second positional argument.
 
 =head4 :i or :ignorecase
 

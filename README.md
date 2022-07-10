@@ -76,6 +76,10 @@ The `:file` named argument to be passed to the [paths](https://raku.land/zef:liz
 
 The `:files-only` named argument determines whether only the filename should be returned, rather than a list of pairs, in which the key is the filename, and the value is a list of filenumber / line pairs.
 
+#### :follow-symlinks
+
+The `:follow-symlinks` named argument to be passed to the [paths](https://raku.land/zef:lizmat/paths) subroutine. Ignored if a list of files was specified as the second positional argument.
+
 #### :i or :ignorecase
 
 The `:i` (or `:ignorecase`) named argument indicates whether searches should be done without regard to case. Ignored if the needle is **not** a `Str`.
