@@ -15,6 +15,7 @@ my multi sub files-containing(
          :$file is copy,
          :$dir,
          :$follow-symlinks,
+         :$sort,
          *%_
 ) {
     without $file {
@@ -33,9 +34,14 @@ my multi sub files-containing(
               !! { .ends-with(any(@exts)) && !.starts-with(".") }
             !! !*.starts-with(".")
     }
+    my $seq := paths($root, :$file, :$dir, :$follow-symlinks);
     files-containing(
       $needle,
-      paths($root, :$file, :$dir, :$follow-symlinks),
+      $sort
+        ?? Callable.ACCEPTS($sort)
+          ?? $seq.sort($sort)
+          !! $seq.sort
+        !! $seq,
       |%_
     )
 }
@@ -90,6 +96,7 @@ my sub EXPORT() {
       '&paths'            => &paths,
       '&lines-containing' => &lines-containing,
       '&files-containing' => &files-containing,
+      '&hyperize'         => &hyperize,
 }
 
 =begin pod
@@ -130,6 +137,20 @@ The C<files-containing> subroutine returns either a list of filenames
 of which the key is the filename, and the value is a list of pairs, in
 which the key is the linenumber and the value is the line in which the
 needle was found.
+
+=head1 RE-EXPORTED SUBROUTINES
+
+=head1 hyperize
+
+As provided by the C<hyperize> module that is used by this module.
+
+=head1 lines-containing
+
+As provided by the C<Lines::Containing> module that is used by this module.
+
+=head1 paths
+
+As provided by the C<paths> module that is used by this module.
 
 =head3 Positional Arguments
 
@@ -239,6 +260,14 @@ with a true value.
 The C<:offset> named argument indicates the value of the first line number
 in a file.  It defaults to B<0>.  Ignored if the C<:files-only> named argument
 has been specified with a true value.
+
+=head4 :sort
+
+The C<:sort> named argument indicates whether the list of files obtained
+from the L<paths|https://raku.land/zef:lizmat/paths> subroutine should be
+sorted.  Ignored if a list of files was specified as the second positional
+argument.  Can either be a C<Bool>, or a C<Callable> to be used by the
+sort routine to sort.
 
 =head2 paths
 

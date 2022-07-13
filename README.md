@@ -34,6 +34,24 @@ files-containing
 
 The `files-containing` subroutine returns either a list of filenames (when the `:files-only` named argument is specified) or a list of pairs, of which the key is the filename, and the value is a list of pairs, in which the key is the linenumber and the value is the line in which the needle was found.
 
+RE-EXPORTED SUBROUTINES
+=======================
+
+hyperize
+========
+
+As provided by the `hyperize` module that is used by this module.
+
+lines-containing
+================
+
+As provided by the `Lines::Containing` module that is used by this module.
+
+paths
+=====
+
+As provided by the `paths` module that is used by this module.
+
 ### Positional Arguments
 
 #### needle
@@ -105,6 +123,10 @@ The `:max-count` named argument indicates the maximum number of lines that shoul
 #### :offset
 
 The `:offset` named argument indicates the value of the first line number in a file. It defaults to **0**. Ignored if the `:files-only` named argument has been specified with a true value.
+
+#### :sort
+
+The `:sort` named argument indicates whether the list of files obtained from the [paths](https://raku.land/zef:lizmat/paths) subroutine should be sorted. Ignored if a list of files was specified as the second positional argument. Can either be a `Bool`, or a `Callable` to be used by the sort routine to sort.
 
 paths
 -----

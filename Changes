@@ -2,6 +2,10 @@ Revision history for Files-Containing
 
 {{$NEXT}}
 
+0.0.10  2022-07-13T22:13:29+02:00
+    - Add :sort named argument to sort files produced by paths
+    - Also re-export "hyperize"
+
 0.0.9  2022-07-10T15:17:15+02:00
     - No longer follow symlinked directories by default.
     - Bump dependency on paths to get :follow-symlinks capability

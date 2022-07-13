@@ -1,9 +1,9 @@
 use Test;
 use Files::Containing;
 
-plan 3;
+plan 4;
 
 ok ::('&' ~ $_) ~~ Callable, "is $_ exported?"
-  for <paths lines-containing files-containing>;
+  for <paths lines-containing files-containing hyperize>;
 
 # vim: expandtab shiftwidth=4
