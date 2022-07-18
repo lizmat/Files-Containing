@@ -19,6 +19,10 @@ for files-containing("foo") {
         say .key ~ ': ' ~ .value;  # linenr: line
     }
 }
+
+for files-containing("foo", :count-only) {
+    say .key.relative ~ ': ' ~  .value;
+}
 ```
 
 DESCRIPTION
@@ -69,6 +73,10 @@ It can be specified with a list of files to be searched. Or it can be a scalar v
 #### :batch
 
 The `:batch` named argument to be passed to the hypering logic for parallel searching. It determines the number of files that will be processed per thread at a time. Defaults to whatever the default of `hyper` is.
+
+#### :count-only
+
+The `count-only` named argument to be passed to the `lines-containing|https://raku.land/zef:lizmat/lines-containing` subroutine, which will only return a count of matched lines if specified with a `True` value. `False` by default.
 
 #### :degree
 

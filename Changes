@@ -2,6 +2,9 @@ Revision history for Files-Containing
 
 {{$NEXT}}
 
+0.0.11  2022-07-18T16:45:18+02:00
+    - Add :count-only named argument to just produce counts
+
 0.0.10  2022-07-13T22:13:29+02:00
     - Add :sort named argument to sort files produced by paths
     - Also re-export "hyperize"

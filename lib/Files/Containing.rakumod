@@ -1,6 +1,6 @@
 use hyperize:ver<0.0.2>:auth<zef:lizmat>;
 use paths:ver<10.0.6>:auth<zef:lizmat>;
-use Lines::Containing:ver<0.0.6>:auth<zef:lizmat>;
+use Lines::Containing:ver<0.0.8>:auth<zef:lizmat>;
 
 my sub is-simple-Callable($needle) {
     Callable.ACCEPTS($needle) && !Regex.ACCEPTS($needle)
@@ -9,7 +9,7 @@ my sub is-simple-Callable($needle) {
 my proto sub files-containing(|) {*}
 my multi sub files-containing(
   Any:D   $needle,
-  Str:D   $root?,
+          $root?,
   List() :$extensions,
          :$include-dot-files,
          :$file is copy,
@@ -56,8 +56,8 @@ my multi sub files-containing(
         :$degree,
         :$max-count,
         :$invert-match,
+        :$count-only,
 ) {
-
     @files.&hyperize($batch, @files == 1 ?? 1 !! $degree)
       .map: $files-only
         ?? is-simple-Callable($needle)
@@ -71,21 +71,23 @@ my multi sub files-containing(
              }
         !! is-simple-Callable($needle)
           ?? -> IO() $io {
-                 with try lines-containing(
+                 with lines-containing(
                    $io, $needle, :$i, :$m, :p, :$max-count,
-                   :$offset, :$invert-match,
-                 ) -> @pairs {
-                     $io => @pairs.Slip if @pairs.elems;
+                   :$offset, :$invert-match, :$count-only,
+                 ) -> \result {
+                     $io => ($count-only ?? result !! result.Slip)
+                       if result.elems;
                  }
              }
           !! -> IO() $io {
                  my $slurped := try $io.slurp(:enc<utf8-c8>);
                  if $slurped && $slurped.contains($needle, :$i, :$m) {
-                     with try lines-containing(
+                     with lines-containing(
                        $slurped, $needle, :$i, :$m, :p, :$max-count,
-                       :$offset, :$invert-match,
-                     ) -> @pairs {
-                         $io => @pairs.Slip if @pairs.elems;
+                       :$offset, :$invert-match, :$count-only,
+                     ) -> \result {
+                         $io => ($count-only ?? result !! result.Slip)
+                           if result.elems;
                      }
                  }
              }
@@ -118,6 +120,10 @@ for files-containing("foo") {
     for .value {
         say .key ~ ': ' ~ .value;  # linenr: line
     }
+}
+
+for files-containing("foo", :count-only) {
+    say .key.relative ~ ': ' ~  .value;
 }
 
 =end code
@@ -180,6 +186,13 @@ The C<:batch> named argument to be passed to the hypering logic for
 parallel searching.  It determines the number of files that will be
 processed per thread at a time.  Defaults to whatever the default of
 C<hyper> is.
+
+=head4 :count-only
+
+The C<count-only> named argument to be passed to the
+C<lines-containing|https://raku.land/zef:lizmat/lines-containing>
+subroutine, which will only return a count of matched lines if
+specified with a C<True> value.  C<False> by default.
 
 =head4 :degree
 
