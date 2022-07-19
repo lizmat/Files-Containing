@@ -1,6 +1,6 @@
 use hyperize:ver<0.0.2>:auth<zef:lizmat>;
 use paths:ver<10.0.6>:auth<zef:lizmat>;
-use Lines::Containing:ver<0.0.8>:auth<zef:lizmat>;
+use Lines::Containing:ver<0.0.9>:auth<zef:lizmat>;
 
 my sub is-simple-Callable($needle) {
     Callable.ACCEPTS($needle) && !Regex.ACCEPTS($needle)
@@ -57,6 +57,7 @@ my multi sub files-containing(
         :$max-count,
         :$invert-match,
         :$count-only,
+        :$type,
 ) {
     @files.&hyperize($batch, @files == 1 ?? 1 !! $degree)
       .map: $files-only
@@ -73,7 +74,7 @@ my multi sub files-containing(
           ?? -> IO() $io {
                  with lines-containing(
                    $io, $needle, :$i, :$m, :p, :$max-count,
-                   :$offset, :$invert-match, :$count-only,
+                   :$offset, :$invert-match, :$count-only, :$type,
                  ) -> \result {
                      $io => ($count-only ?? result !! result.Slip)
                        if result.elems;
@@ -84,7 +85,7 @@ my multi sub files-containing(
                  if $slurped && $slurped.contains($needle, :$i, :$m) {
                      with lines-containing(
                        $slurped, $needle, :$i, :$m, :p, :$max-count,
-                       :$offset, :$invert-match, :$count-only,
+                       :$offset, :$invert-match, :$count-only, :$type,
                      ) -> \result {
                          $io => ($count-only ?? result !! result.Slip)
                            if result.elems;
@@ -261,14 +262,14 @@ The C<:m> (or C<:ignoremark>) named argument indicates whether searches
 should be done by only looking at the base characters, without regard to
 any additional accents.  Ignored if the needle is B<not> a C<Str>.
 
-=head4 :max-count
+=head4 :max-count=N
 
 The C<:max-count> named argument indicates the maximum number of lines
 that should be reported per file.  Defaults to C<Any>, indicating that
 all possible lines will be produced.  Ignored if C<:files-only> is specified
 with a true value.
 
-=head4 :offset
+=head4 :offset=N
 
 The C<:offset> named argument indicates the value of the first line number
 in a file.  It defaults to B<0>.  Ignored if the C<:files-only> named argument
@@ -281,6 +282,14 @@ from the L<paths|https://raku.land/zef:lizmat/paths> subroutine should be
 sorted.  Ignored if a list of files was specified as the second positional
 argument.  Can either be a C<Bool>, or a C<Callable> to be used by the
 sort routine to sort.
+
+=head4 :type=words|starts-with|ends-with|contains
+
+Only makes sense if the needle is a C<Cool> object.  With C<words>
+specified, will look for needle as a word in a line, with C<starts-with>
+will look for the needle at the beginning of a line, with C<ends-with>
+will look for the needle at the end of a line, with C<contains> will
+look for the needle at any position in a line.  Which is the default.
 
 =head2 paths
 

@@ -124,17 +124,21 @@ The `:invert-match` named argument is a boolean indicating whether to produce fi
 
 The `:m` (or `:ignoremark`) named argument indicates whether searches should be done by only looking at the base characters, without regard to any additional accents. Ignored if the needle is **not** a `Str`.
 
-#### :max-count
+#### :max-count=N
 
 The `:max-count` named argument indicates the maximum number of lines that should be reported per file. Defaults to `Any`, indicating that all possible lines will be produced. Ignored if `:files-only` is specified with a true value.
 
-#### :offset
+#### :offset=N
 
 The `:offset` named argument indicates the value of the first line number in a file. It defaults to **0**. Ignored if the `:files-only` named argument has been specified with a true value.
 
 #### :sort
 
 The `:sort` named argument indicates whether the list of files obtained from the [paths](https://raku.land/zef:lizmat/paths) subroutine should be sorted. Ignored if a list of files was specified as the second positional argument. Can either be a `Bool`, or a `Callable` to be used by the sort routine to sort.
+
+#### :type=words|starts-with|ends-with|contains
+
+Only makes sense if the needle is a `Cool` object. With `words` specified, will look for needle as a word in a line, with `starts-with` will look for the needle at the beginning of a line, with `ends-with` will look for the needle at the end of a line, with `contains` will look for the needle at any position in a line. Which is the default.
 
 paths
 -----

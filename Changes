@@ -2,6 +2,9 @@ Revision history for Files-Containing
 
 {{$NEXT}}
 
+0.0.12  2022-07-19T16:07:19+02:00
+    - Bump dependency on "Lines::Containing" to get :type capability
+
 0.0.11  2022-07-18T16:45:18+02:00
     - Add :count-only named argument to just produce counts
 
@@ -11,7 +14,7 @@ Revision history for Files-Containing
 
 0.0.9  2022-07-10T15:17:15+02:00
     - No longer follow symlinked directories by default.
-    - Bump dependency on paths to get :follow-symlinks capability
+    - Bump dependency on "paths" to get :follow-symlinks capability
     - Add :follow-symlinks named argument to follow symlinked directories
 
 0.0.8  2022-07-09T14:03:03+02:00
