@@ -1,6 +1,6 @@
 use hyperize:ver<0.0.2>:auth<zef:lizmat>;
 use paths:ver<10.0.6>:auth<zef:lizmat>;
-use Lines::Containing:ver<0.0.9>:auth<zef:lizmat>;
+use Lines::Containing:ver<0.0.10>:auth<zef:lizmat>;
 
 my sub is-simple-Callable($needle) {
     Callable.ACCEPTS($needle) && !Regex.ACCEPTS($needle)
@@ -99,6 +99,7 @@ my sub EXPORT() {
       '&paths'            => &paths,
       '&lines-containing' => &lines-containing,
       '&files-containing' => &files-containing,
+      '&has-word'         => &has-word,
       '&hyperize'         => &hyperize,
 }
 
@@ -290,6 +291,11 @@ specified, will look for needle as a word in a line, with C<starts-with>
 will look for the needle at the beginning of a line, with C<ends-with>
 will look for the needle at the end of a line, with C<contains> will
 look for the needle at any position in a line.  Which is the default.
+
+=head2 has-word
+
+The C<has-word> subroutine, as provided by the version of
+L<has-word|https://raku.land/zef:lizmat/has-word> that is used.
 
 =head2 paths
 

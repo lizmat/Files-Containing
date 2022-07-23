@@ -140,6 +140,11 @@ The `:sort` named argument indicates whether the list of files obtained from the
 
 Only makes sense if the needle is a `Cool` object. With `words` specified, will look for needle as a word in a line, with `starts-with` will look for the needle at the beginning of a line, with `ends-with` will look for the needle at the end of a line, with `contains` will look for the needle at any position in a line. Which is the default.
 
+has-word
+--------
+
+The `has-word` subroutine, as provided by the version of [has-word](https://raku.land/zef:lizmat/has-word) that is used.
+
 paths
 -----
 
