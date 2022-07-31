@@ -2,6 +2,10 @@ Revision history for Files-Containing
 
 {{$NEXT}}
 
+0.0.15  2022-07-31T22:19:34+02:00
+    - Actually set $*IO only if needle is simple Callable
+    - Add support for FIRST, NEXT and LAST phasers on simple Callables
+
 0.0.14  2022-07-31T11:39:44+02:00
     - Set dynamic variable $*IO to indicate file being processed
 

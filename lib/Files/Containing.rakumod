@@ -6,6 +6,13 @@ my sub is-simple-Callable($needle) {
     Callable.ACCEPTS($needle) && !Regex.ACCEPTS($needle)
 }
 
+# Check the given Callable for the named phaser, and run it if there is one
+my sub run-phaser(&code, str $name) {
+    if Block.ACCEPTS(&code) && &code.callable_for_phaser($name) -> &phaser {
+        phaser();
+    }
+}
+
 my proto sub files-containing(|) {*}
 my multi sub files-containing(
   Any:D   $needle,
@@ -53,42 +60,58 @@ my multi sub files-containing(
         :$offset = 0,
         :$files-only,
         :$batch,
-        :$degree,
+        :$degree is copy,
         :$max-count,
         :$invert-match,
         :$count-only,
         :$type,
 ) {
-    @files.&hyperize($batch, @files == 1 ?? 1 !! $degree)
-      .map: $files-only
-        ?? is-simple-Callable($needle)
+    $degree = 1 if @files == 1;
+
+    # Handle a Callable needle in a thread-safe manner
+    if is-simple-Callable($needle) {
+        run-phaser($needle, 'FIRST');
+        my $NEXT :=
+          Block.ACCEPTS($needle) && $needle.callable_for_phaser('NEXT');
+        my $lock := Lock.new;
+
+        @files.&hyperize($batch, $degree).map: $files-only
           ?? -> IO() $io {
                  with (try $io.slurp(:enc<utf8-c8>)) -> $slurped {
                      my $*IO := $io;
-                     $io if $needle($slurped)
+                     if $needle($slurped) {
+                         $lock.protect($NEXT) if $NEXT;
+                         $io
+                     }
                  }
              }
           !! -> IO() $io {
-                 if (try $io.slurp(:enc<utf8-c8>)) -> $slurped {
-                     my $*IO := $io;
-                     $io if $slurped.contains($needle, :$i, :$m)
-                 }
-             }
-        !! is-simple-Callable($needle)
-          ?? -> IO() $io {
                  my $*IO := $io;
                  with lines-containing(
                    $io, $needle, :$i, :$m, :p, :$max-count,
                    :$offset, :$invert-match, :$count-only, :$type,
                  ) -> \result {
-                     $io => ($count-only ?? result !! result.Slip)
-                       if result.elems;
+                     if result.elems {
+                         $lock.protect($NEXT) if $NEXT;
+                         $io => ($count-only ?? result !! result.Slip)
+                     }
+                 }
+             }
+
+        run-phaser($needle, 'LAST');
+    }
+
+    # Not a simple Callable as needle
+    else {
+        @files.&hyperize($batch, $degree).map: $files-only
+          ?? -> IO() $io {
+                 if (try $io.slurp(:enc<utf8-c8>)) -> $slurped {
+                     $io if $slurped.contains($needle, :$i, :$m)
                  }
              }
           !! -> IO() $io {
                  my $slurped := try $io.slurp(:enc<utf8-c8>);
                  if $slurped && $slurped.contains($needle, :$i, :$m) {
-                     my $*IO := $io;
                      with lines-containing(
                        $slurped, $needle, :$i, :$m, :p, :$max-count,
                        :$offset, :$invert-match, :$count-only, :$type,
@@ -98,6 +121,7 @@ my multi sub files-containing(
                      }
                  }
              }
+    }
 }
 
 my sub EXPORT() {
@@ -161,8 +185,10 @@ be a C<Str>, a C<Regex> or a C<Callable>.  See the documentation of the
 L<Lines::Containing|https://raku.land/zef:lizmat/Lines::Containing> module
 for the exact semantics of each possible needle.
 
-If the needle is a C<Callable> or a C<Regex>, then the dynamic variable
-C<$*IO> will contain the C<IO::Path> object of the file being processed.
+If the needle is a C<Callable>, then the dynamic variable C<$*IO> will
+contain the C<IO::Path> object of the file being processed.  If the
+C<Callable> has C<FIRST>, C<NEXT> or C<LAST> phasers, they will be
+called at the appropriate times in a thread-safe manner.
 
 =head4 files or directory
 

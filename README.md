@@ -44,7 +44,7 @@ The `files-containing` subroutine returns either a list of filenames (when the `
 
 The first positional argument is the needle to search for. This can either be a `Str`, a `Regex` or a `Callable`. See the documentation of the [Lines::Containing](https://raku.land/zef:lizmat/Lines::Containing) module for the exact semantics of each possible needle.
 
-If the needle is a `Callable` or a `Regex`, then the dynamic variable `$*IO` will contain the `IO::Path` object of the file being processed.
+If the needle is a `Callable`, then the dynamic variable `$*IO` will contain the `IO::Path` object of the file being processed. If the `Callable` has `FIRST`, `NEXT` or `LAST` phasers, they will be called at the appropriate times in a thread-safe manner.
 
 #### files or directory
 
