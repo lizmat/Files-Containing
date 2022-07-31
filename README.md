@@ -38,29 +38,13 @@ files-containing
 
 The `files-containing` subroutine returns either a list of filenames (when the `:files-only` named argument is specified) or a list of pairs, of which the key is the filename, and the value is a list of pairs, in which the key is the linenumber and the value is the line in which the needle was found.
 
-RE-EXPORTED SUBROUTINES
-=======================
-
-hyperize
-========
-
-As provided by the `hyperize` module that is used by this module.
-
-lines-containing
-================
-
-As provided by the `Lines::Containing` module that is used by this module.
-
-paths
-=====
-
-As provided by the `paths` module that is used by this module.
-
 ### Positional Arguments
 
 #### needle
 
 The first positional argument is the needle to search for. This can either be a `Str`, a `Regex` or a `Callable`. See the documentation of the [Lines::Containing](https://raku.land/zef:lizmat/Lines::Containing) module for the exact semantics of each possible needle.
+
+If the needle is a `Callable` or a `Regex`, then the dynamic variable `$*IO` will contain the `IO::Path` object of the file being processed.
 
 #### files or directory
 
@@ -154,6 +138,24 @@ lines-containing
 ----------------
 
 The `lines-containing` subroutine, as provided by the version of [lines-containing](https://raku.land/zef:lizmat/Lines::Containing) that is used.
+
+RE-EXPORTED SUBROUTINES
+=======================
+
+hyperize
+--------
+
+As provided by the `hyperize` module that is used by this module.
+
+lines-containing
+----------------
+
+As provided by the `Lines::Containing` module that is used by this module.
+
+paths
+-----
+
+As provided by the `paths` module that is used by this module.
 
 AUTHOR
 ======

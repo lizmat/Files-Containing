@@ -63,15 +63,20 @@ my multi sub files-containing(
       .map: $files-only
         ?? is-simple-Callable($needle)
           ?? -> IO() $io {
-                 my $slurped := try $io.slurp(:enc<utf8-c8>);
-                 $io if $slurped.defined && $needle($slurped)
+                 with (try $io.slurp(:enc<utf8-c8>)) -> $slurped {
+                     my $*IO := $io;
+                     $io if $needle($slurped)
+                 }
              }
           !! -> IO() $io {
-                 my $slurped := try $io.slurp(:enc<utf8-c8>);
-                 $io if $slurped && $slurped.contains($needle, :$i, :$m)
+                 if (try $io.slurp(:enc<utf8-c8>)) -> $slurped {
+                     my $*IO := $io;
+                     $io if $slurped.contains($needle, :$i, :$m)
+                 }
              }
         !! is-simple-Callable($needle)
           ?? -> IO() $io {
+                 my $*IO := $io;
                  with lines-containing(
                    $io, $needle, :$i, :$m, :p, :$max-count,
                    :$offset, :$invert-match, :$count-only, :$type,
@@ -83,6 +88,7 @@ my multi sub files-containing(
           !! -> IO() $io {
                  my $slurped := try $io.slurp(:enc<utf8-c8>);
                  if $slurped && $slurped.contains($needle, :$i, :$m) {
+                     my $*IO := $io;
                      with lines-containing(
                        $slurped, $needle, :$i, :$m, :p, :$max-count,
                        :$offset, :$invert-match, :$count-only, :$type,
@@ -146,20 +152,6 @@ of which the key is the filename, and the value is a list of pairs, in
 which the key is the linenumber and the value is the line in which the
 needle was found.
 
-=head1 RE-EXPORTED SUBROUTINES
-
-=head1 hyperize
-
-As provided by the C<hyperize> module that is used by this module.
-
-=head1 lines-containing
-
-As provided by the C<Lines::Containing> module that is used by this module.
-
-=head1 paths
-
-As provided by the C<paths> module that is used by this module.
-
 =head3 Positional Arguments
 
 =head4 needle
@@ -168,6 +160,9 @@ The first positional argument is the needle to search for.  This can either
 be a C<Str>, a C<Regex> or a C<Callable>.  See the documentation of the
 L<Lines::Containing|https://raku.land/zef:lizmat/Lines::Containing> module
 for the exact semantics of each possible needle.
+
+If the needle is a C<Callable> or a C<Regex>, then the dynamic variable
+C<$*IO> will contain the C<IO::Path> object of the file being processed.
 
 =head4 files or directory
 
@@ -307,6 +302,20 @@ L<paths|https://raku.land/zef:lizmat/paths> that is used.
 The C<lines-containing> subroutine, as provided by the version of
 L<lines-containing|https://raku.land/zef:lizmat/Lines::Containing> that
 is used.
+
+=head1 RE-EXPORTED SUBROUTINES
+
+=head2 hyperize
+
+As provided by the C<hyperize> module that is used by this module.
+
+=head2 lines-containing
+
+As provided by the C<Lines::Containing> module that is used by this module.
+
+=head2 paths
+
+As provided by the C<paths> module that is used by this module.
 
 =head1 AUTHOR
 
