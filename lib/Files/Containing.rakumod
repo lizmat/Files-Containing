@@ -6,13 +6,6 @@ my sub is-simple-Callable($needle) {
     Callable.ACCEPTS($needle) && !Regex.ACCEPTS($needle)
 }
 
-# Check the given Callable for the named phaser, and run it if there is one
-my sub run-phaser(&code, str $name) {
-    if Block.ACCEPTS(&code) && &code.callable_for_phaser($name) -> &phaser {
-        phaser();
-    }
-}
-
 my proto sub files-containing(|) {*}
 my multi sub files-containing(
   Any:D   $needle,
@@ -70,19 +63,11 @@ my multi sub files-containing(
 
     # Handle a Callable needle in a thread-safe manner
     if is-simple-Callable($needle) {
-        run-phaser($needle, 'FIRST');
-        my $NEXT :=
-          Block.ACCEPTS($needle) && $needle.callable_for_phaser('NEXT');
-        my $lock := Lock.new;
-
         @files.&hyperize($batch, $degree).map: $files-only
           ?? -> IO() $io {
                  with (try $io.slurp(:enc<utf8-c8>)) -> $slurped {
                      my $*IO := $io;
-                     if $needle($slurped) {
-                         $lock.protect($NEXT) if $NEXT;
-                         $io
-                     }
+                     $io if $needle($slurped)
                  }
              }
           !! -> IO() $io {
@@ -92,13 +77,10 @@ my multi sub files-containing(
                    :$offset, :$invert-match, :$count-only, :$type,
                  ) -> \result {
                      if result.elems {
-                         $lock.protect($NEXT) if $NEXT;
                          $io => ($count-only ?? result !! result.Slip)
                      }
                  }
              }
-
-        run-phaser($needle, 'LAST');
     }
 
     # Not a simple Callable as needle
@@ -186,9 +168,7 @@ L<Lines::Containing|https://raku.land/zef:lizmat/Lines::Containing> module
 for the exact semantics of each possible needle.
 
 If the needle is a C<Callable>, then the dynamic variable C<$*IO> will
-contain the C<IO::Path> object of the file being processed.  If the
-C<Callable> has C<FIRST>, C<NEXT> or C<LAST> phasers, they will be
-called at the appropriate times in a thread-safe manner.
+contain the C<IO::Path> object of the file being processed.
 
 =head4 files or directory
 
