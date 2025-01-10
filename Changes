@@ -1,6 +1,9 @@
 Revision history for Files-Containing
 
 {{$NEXT}}
+    - Upped dependencies as appropriate
+    - Add CI badge for each OS
+    - Update copyright year
 
 0.0.16  2022-08-03T22:50:19+02:00
     - Fix using a Callable as a needle

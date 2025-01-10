@@ -6,9 +6,9 @@
   "build-depends": [
   ],
   "depends": [
-    "hyperize:ver<0.0.2>:auth<zef:lizmat>",
-    "paths:ver<10.0.6>:auth<zef:lizmat>",
-    "Lines::Containing:ver<0.0.10>:auth<zef:lizmat>"
+    "hyperize:ver<0.0.3+>:auth<zef:lizmat>",
+    "paths:ver<10.1+>:auth<zef:lizmat>",
+    "Lines::Containing:ver<0.0.11+>:auth<zef:lizmat>"
   ],
   "description": "Search for strings in files",
   "license": "Artistic-2.0",

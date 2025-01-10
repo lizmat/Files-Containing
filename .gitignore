@@ -1,3 +1,4 @@
 .precomp/
 /Files-Containing-*
 /releases/
+*.rakucov
